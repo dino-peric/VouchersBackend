@@ -21,13 +21,13 @@ public class VoucherDb
     public int Dislikes { get; set; }
 
     public long TypeId { get; set; }
-    public virtual VoucherTypeDb Type { get; set; }/* = null! ;*/
+    public virtual VoucherTypeDb Type { get; set; } = null!;
 
     public long UnitId { get; set; }
-    public virtual UnitDb Unit { get; set; }/* = null! ;*/
+    public virtual UnitDb Unit { get; set; } = null! ;
 
     public long WebshopId { get; set; }
-    public virtual WebshopDb Webshop { get; set; }/* = null! ;*/
+    public virtual WebshopDb Webshop { get; set; } = null! ;
 
     public VoucherDb() { }
 

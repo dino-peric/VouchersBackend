@@ -23,8 +23,11 @@ namespace VouchersBackend.Database
         {
             if (!optionsBuilder.IsConfigured)
             {
-                // TODO Get from Environment
-                var connectionString = "Host=localhost:5432;Username=postgres;Password=internet;Database=migrationstest";
+                string? connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+                if (connectionString is null)
+                    throw new ArgumentNullException("Connection string not set! Set the \"CONNECTION_STRING\" env variable");
+
                 optionsBuilder.UseNpgsql(connectionString);
             }
         }

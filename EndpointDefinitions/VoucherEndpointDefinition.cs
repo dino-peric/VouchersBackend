@@ -58,7 +58,6 @@ public class VoucherEndpointDefinition : IEndpointDefinition
             return Results.Problem("Provided voucher was null");
 
         var newVoucher = await repo.CreateVoucher(voucher);
-
         return Results.Created($"/vouchers/{newVoucher.Id}", newVoucher);
     }
 
