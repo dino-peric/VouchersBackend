@@ -39,5 +39,13 @@ app.UseEndpointDefinitions();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.Run("http://0.0.0.0:3000");
+string? port = Environment.GetEnvironmentVariable("PORT");
+// connectionString = "Host=ec2-34-253-116-145.eu-west-1.compute.amazonaws.com:5432;Username=xlipplyaqjqvty;Password=7886ae47dadc320552c6c7dba28ff67f064be8a21af2dbb94f5f270c4a305961;Database=d96q92h3hnulcb";
+
+Console.WriteLine($"Hello im a port: {port}");
+
+if (port is null)
+    throw new ArgumentNullException("Port not set! Set the \"PORT\" env variable");
+
+app.Run($"http://0.0.0.0:{port}");
 // app.Run("http://localhost:3000");
