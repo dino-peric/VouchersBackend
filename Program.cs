@@ -7,11 +7,18 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // TODO Dockerize
-// TODO Add ENV variable for database connection string
 // TODO Unit tests?
 
+string? connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+// connectionString = "Host=ec2-34-253-116-145.eu-west-1.compute.amazonaws.com:5432;Username=xlipplyaqjqvty;Password=7886ae47dadc320552c6c7dba28ff67f064be8a21af2dbb94f5f270c4a305961;Database=d96q92h3hnulcb";
+
+Console.WriteLine($"Hello im a connection string: {connectionString}");
+
+if (connectionString is null)
+    throw new ArgumentNullException("Connection string not set! Set the \"CONNECTION_STRING\" env variable");
+
+
 // TODO see why line below does absolutely nothing in code, but "dotnet-ef migrations add InitialCreate" doesn't want to work without it 
-var connectionString = "Host=localhost:5432;Username=postgres;Password=internet;Database=migrationstest";
 builder.Services.AddDbContext<VoucherdbContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services
@@ -32,4 +39,5 @@ app.UseEndpointDefinitions();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.Run("http://localhost:3000");
+app.Run("http://0.0.0.0:3000");
+// app.Run("http://localhost:3000");
