@@ -14,4 +14,9 @@ app.ConfigureApplication();
 
 // connectionString = "Host=ec2-34-253-116-145.eu-west-1.compute.amazonaws.com:5432;Username=xlipplyaqjqvty;Password=7886ae47dadc320552c6c7dba28ff67f064be8a21af2dbb94f5f270c4a305961;Database=d96q92h3hnulcb";
 
-app.Run($"http://localhost:{Environment.GetEnvironmentVariable("PORT") ?? throw new ArgumentNullException("Port not set! Set the \"PORT\" env variable")}");
+var port = Environment.GetEnvironmentVariable("PORT");
+
+Console.WriteLine($"PORT: {port}");
+
+
+app.Run($"https://localhost:{Environment.GetEnvironmentVariable("PORT") ?? throw new ArgumentNullException("Port not set! Set the \"PORT\" env variable")}");
