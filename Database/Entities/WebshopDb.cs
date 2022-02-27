@@ -16,17 +16,4 @@ public partial class WebshopDb
     public string Url { get; set; } = null!;
 
     public virtual ICollection<VoucherDb>? Vouchers { get; set; }
-
-    public WebshopDb(WebshopDTO webshopDTO)
-    {
-        Id = webshopDTO.Id;
-        Name = webshopDTO.Name;
-        Url = webshopDTO.Url;
-    }
-
-    public WebshopDb(CreateWebshopDTO createWebshopDTO)
-    {
-        Name = createWebshopDTO.Name;
-        Url = createWebshopDTO.Url;
-    }
 }

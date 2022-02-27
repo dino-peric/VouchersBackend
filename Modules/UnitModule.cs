@@ -19,6 +19,12 @@ public class UnitModule : IModule
         services.AddSingleton<IUnitRepository, UnitRepository>();
     }
 
+    public WebApplicationBuilder RegisterModule(WebApplicationBuilder builder)
+    {
+        UnitRepository.ConfigureRepository(builder);
+        return builder;
+    }
+
     internal async Task<IResult> GetAllUnits(IUnitRepository repo)
     {
         var webshops = await repo.GetAllUnits();

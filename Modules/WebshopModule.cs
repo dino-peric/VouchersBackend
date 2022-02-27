@@ -14,6 +14,12 @@ public class WebshopModule : IModule
         app.MapDelete("/webshops/{id:int}", DeleteWebshop);
     }
 
+    public WebApplicationBuilder RegisterModule(WebApplicationBuilder builder)
+    {
+        WebshopRepository.ConfigureRepository(builder);
+        return builder;
+    }
+
     internal async Task<IResult> GetAllWebshops(IWebshopRepository repo)
     {
         var webshops = await repo.GetAllWebshops();

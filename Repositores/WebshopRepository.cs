@@ -2,6 +2,7 @@
 using VouchersBackend.Models;
 using VouchersBackend.Database;
 using System.Linq.Dynamic.Core;
+using AutoMapper;
 
 namespace VouchersBackend.Repositores;
 
@@ -16,11 +17,19 @@ interface IWebshopRepository
 
 public class WebshopRepository : IWebshopRepository
 {
+    private static IMapper _mapper = null!;
+
+    public static void ConfigureRepository(WebApplicationBuilder builder)
+    {
+        var provider = builder.Services.BuildServiceProvider();
+        _mapper = provider.GetRequiredService<IMapper>(); 
+    }
+
     public async Task<List<WebshopDTO>> GetAllWebshops()
     {
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            return await db.Webshops.Select(w => new WebshopDTO(w)).ToListAsync();
+            return await db.Webshops.Select(w => _mapper.Map<WebshopDTO>(w)).ToListAsync();
         }
     }
 
@@ -33,7 +42,7 @@ public class WebshopRepository : IWebshopRepository
             if (webshop == default(WebshopDb))
                 return null;
 
-            return new WebshopDTO(webshop);
+            return _mapper.Map<WebshopDTO>(webshop);
         }
     }
 
@@ -48,12 +57,12 @@ public class WebshopRepository : IWebshopRepository
         //    newVoucher.ValidFrom = DateTime.SpecifyKind(newVoucher.ValidFrom, DateTimeKind.Utc);
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            var webshopDb = new WebshopDb(newWebshop);
+            var webshopDb = _mapper.Map<WebshopDb>(newWebshop);
 
             db.Webshops.Add(webshopDb);
             await db.SaveChangesAsync();
 
-            return new WebshopDTO(webshopDb);
+            return _mapper.Map<WebshopDTO>(webshopDb);
         }
     }
 
@@ -62,15 +71,15 @@ public class WebshopRepository : IWebshopRepository
     {
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            var webshop = await db.Webshops.FindAsync(updatedWebshop.Id);
+            var webshopDb = await db.Webshops.FindAsync(updatedWebshop.Id);
 
-            if (webshop == default(WebshopDb))
+            if (webshopDb == default(WebshopDb))
                 return null;
 
-            db.Entry(webshop).CurrentValues.SetValues(updatedWebshop);
+            db.Entry(webshopDb).CurrentValues.SetValues(updatedWebshop);
             await db.SaveChangesAsync();
 
-            return new WebshopDTO(webshop);
+            return _mapper.Map<WebshopDTO>(webshopDb);
         }
 
     }
@@ -79,11 +88,11 @@ public class WebshopRepository : IWebshopRepository
     {
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            if (await db.Webshops.FindAsync(id) is WebshopDb voucherDb)
+            if (await db.Webshops.FindAsync(id) is WebshopDb webshopDb)
             {
-                db.Webshops.Remove(voucherDb);
+                db.Webshops.Remove(webshopDb);
                 await db.SaveChangesAsync();
-                return new WebshopDTO(voucherDb);
+                return _mapper.Map<WebshopDTO>(webshopDb);
             }
 
             return null; // Results.NotFound();

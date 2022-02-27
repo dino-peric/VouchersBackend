@@ -3,8 +3,10 @@ using VouchersBackend.Helpers;
 using VouchersBackend.Models;
 using VouchersBackend.Database;
 using System.Linq.Dynamic.Core;
+using AutoMapper;
 
 namespace VouchersBackend.Repositores;
+
 interface IVoucherRepository
 {
     Task<List<VoucherDTO>> GetAllVouchers();
@@ -27,6 +29,14 @@ interface IVoucherRepository
 
 public class VoucherRepository : IVoucherRepository
 {
+    private static IMapper _mapper = null!;
+
+    public static void ConfigureRepository(WebApplicationBuilder builder)
+    {
+        var provider = builder.Services.BuildServiceProvider();
+        _mapper = provider.GetRequiredService<IMapper>(); 
+    }
+
     #region Vouchers
     public async Task<List<VoucherDTO>> QueryVouchers(SortingParameter sortBy,
                                                       SortingDirection sortDir,
@@ -50,7 +60,7 @@ public class VoucherRepository : IVoucherRepository
                 .Include(v => v.Type)
                 .Skip((int)((pageNumber - 1) * pageSize))
                 .Take((int)pageSize)
-                .Select(v => new VoucherDTO(v)).ToListAsync();
+                .Select(v => _mapper.Map<VoucherDTO>(v)).ToListAsync();
         }
     }
 
@@ -62,7 +72,7 @@ public class VoucherRepository : IVoucherRepository
                     .Include(v => v.Webshop)
                     .Include(v => v.Type)
                     .Include(v => v.Unit)
-                    .Select(v => new VoucherDTO(v))
+                    .Select(v => _mapper.Map<VoucherDTO>(v))
                     .ToListAsync();
         }
     }
@@ -81,7 +91,7 @@ public class VoucherRepository : IVoucherRepository
             if (voucher == default(VoucherDb))
                 return null;
 
-            return new VoucherDTO(voucher);
+            return _mapper.Map<VoucherDTO>(voucher);
         }
         // if (await db.Vouchers.FindAsync(id) is VoucherDb voucherDb)
         // {
@@ -100,7 +110,7 @@ public class VoucherRepository : IVoucherRepository
 
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            var voucherDb = new VoucherDb(newVoucher);
+            var voucherDb = _mapper.Map<VoucherDb>(newVoucher);
 
             db.Add(voucherDb);
             await db.SaveChangesAsync();
@@ -109,7 +119,7 @@ public class VoucherRepository : IVoucherRepository
             db.Entry(voucherDb).Reference(v => v.Unit).Load();
             db.Entry(voucherDb).Reference(v => v.Type).Load();
 
-            return new VoucherDTO(voucherDb);
+            return _mapper.Map<VoucherDTO>(voucherDb); //new VoucherDTO(voucherDb);
         }
     }
 
@@ -126,7 +136,7 @@ public class VoucherRepository : IVoucherRepository
                 db.Entry(voucherDb).Reference(v => v.Unit).Load();
                 db.Entry(voucherDb).Reference(v => v.Type).Load();
 
-                return new VoucherDTO(voucherDb);
+                return _mapper.Map<VoucherDTO>(voucherDb);
             }
 
             return null; // Not Found
@@ -141,7 +151,7 @@ public class VoucherRepository : IVoucherRepository
             {
                 db.Vouchers.Remove(voucherDb);
                 await db.SaveChangesAsync();
-                return new VoucherDTO(voucherDb);
+                return _mapper.Map<VoucherDTO>(voucherDb);
             }
 
             return null; // Not Found
@@ -156,7 +166,7 @@ public class VoucherRepository : IVoucherRepository
             {
                 voucherDb.Likes++;
                 await db.SaveChangesAsync();
-                return new VoucherDTO(voucherDb);
+                return _mapper.Map<VoucherDTO>(voucherDb);
             }
 
             return null; // Not Found
@@ -171,7 +181,7 @@ public class VoucherRepository : IVoucherRepository
             {
                 voucherDb.Dislikes++;
                 await db.SaveChangesAsync();
-                return new VoucherDTO(voucherDb);
+                return _mapper.Map<VoucherDTO>(voucherDb);
             }
 
             return null; // Not Found
@@ -183,7 +193,7 @@ public class VoucherRepository : IVoucherRepository
     {
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            return await db.VoucherTypes.Select(w => new VoucherTypeDTO(w)).ToListAsync();
+            return await db.VoucherTypes.Select(vt => _mapper.Map<VoucherTypeDTO>(vt)).ToListAsync();
         }
     }
 
@@ -191,12 +201,12 @@ public class VoucherRepository : IVoucherRepository
     {
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            var webshop = await db.VoucherTypes.Where(v => v.Id == id).FirstOrDefaultAsync();
+            var voucherTypeDb = await db.VoucherTypes.Where(v => v.Id == id).FirstOrDefaultAsync();
 
-            if (webshop == default(VoucherTypeDb))
+            if (voucherTypeDb == default(VoucherTypeDb))
                 return null;
 
-            return new VoucherTypeDTO(webshop);
+            return _mapper.Map<VoucherTypeDTO>(voucherTypeDb);
         }
     }
 
@@ -211,12 +221,12 @@ public class VoucherRepository : IVoucherRepository
         //    newVoucher.ValidFrom = DateTime.SpecifyKind(newVoucher.ValidFrom, DateTimeKind.Utc);
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            var webshopDb = new VoucherTypeDb(newVoucherType);
+            var voucherTypeDb =_mapper.Map<VoucherTypeDb>(newVoucherType);
 
-            db.VoucherTypes.Add(webshopDb);
+            db.VoucherTypes.Add(voucherTypeDb);
             await db.SaveChangesAsync();
 
-            return new VoucherTypeDTO(webshopDb);
+            return _mapper.Map<VoucherTypeDTO>(voucherTypeDb);
         }
     }
 
@@ -224,15 +234,15 @@ public class VoucherRepository : IVoucherRepository
     {
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            var webshop = await db.VoucherTypes.FindAsync(updatedVoucherType.Id);
+            var voucherTypeDb = await db.VoucherTypes.FindAsync(updatedVoucherType.Id);
 
-            if (webshop == default(VoucherTypeDb))
+            if (voucherTypeDb == default(VoucherTypeDb))
                 return null;
 
-            db.Entry(webshop).CurrentValues.SetValues(updatedVoucherType);
+            db.Entry(voucherTypeDb).CurrentValues.SetValues(updatedVoucherType);
             await db.SaveChangesAsync();
 
-            return new VoucherTypeDTO(webshop);
+            return _mapper.Map<VoucherTypeDTO>(voucherTypeDb);
         }
     }
 
@@ -244,7 +254,7 @@ public class VoucherRepository : IVoucherRepository
             {
                 db.VoucherTypes.Remove(voucherDb);
                 await db.SaveChangesAsync();
-                return new VoucherTypeDTO(voucherDb);
+                return _mapper.Map<VoucherTypeDTO>(voucherDb);
             }
 
             return null; // Results.NotFound();

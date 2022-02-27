@@ -15,15 +15,4 @@ public class UnitDb
     public string Name { get; set; } = null!;
 
     public virtual ICollection<VoucherDb>? Vouchers { get; set; }
-
-    public UnitDb(UnitDTO unitDTO)
-    {
-        Id = unitDTO.Id;
-        Name = unitDTO.Name;
-    }
-
-    public UnitDb(CreateUnitDTO unitDTO)
-    {
-        Name = unitDTO.Name;
-    }
 }

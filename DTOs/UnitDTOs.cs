@@ -1,5 +1,5 @@
 ﻿using VouchersBackend.Database;
-
+using AutoMapper;
 namespace VouchersBackend.Models;
 
 public class UnitDTO
@@ -8,12 +8,6 @@ public class UnitDTO
     public string Name { get; set; } = null!;
 
     public UnitDTO() { }
-
-    public UnitDTO(UnitDb unitDb)
-    {
-        Id = unitDb.Id;
-        Name = unitDb.Name;
-    }
 }
 
 public class CreateUnitDTO
@@ -21,9 +15,13 @@ public class CreateUnitDTO
     public string Name { get; set; } = null!;
 
     public CreateUnitDTO() { }
+}
 
-    public CreateUnitDTO(UnitDb unitDb)
+public class UnitProfile : Profile
+{
+    public UnitProfile()
     {
-        Name = unitDb.Name;
+        CreateMap<UnitDTO, UnitDb>().ReverseMap();
+        CreateMap<CreateUnitDTO, UnitDb>().ReverseMap();
     }
 }

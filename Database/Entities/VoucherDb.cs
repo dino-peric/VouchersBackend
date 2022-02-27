@@ -25,40 +25,6 @@ public class VoucherDb
     public virtual WebshopDb Webshop { get; set; } = null! ;
 
     public VoucherDb() { }
-
-    public VoucherDb(CreateVoucherDTO voucherDTO)
-    {
-        WebshopId = voucherDTO.WebshopId;
-        UnitId = voucherDTO.UnitId;
-        TypeId = voucherDTO.TypeId;
-
-        Amount = voucherDTO.Amount;
-        Description = voucherDTO.Description;
-        Code = voucherDTO.Code;
-
-        Likes = voucherDTO.Likes;
-        Dislikes = voucherDTO.Dislikes;
-
-        ValidFrom = voucherDTO.ValidFrom;
-        ValidTo = voucherDTO.ValidTo;
-    }
-
-    public VoucherDb(UpdateVoucherDTO voucherDTO)
-    {
-        WebshopId = voucherDTO.WebshopId;
-        UnitId = voucherDTO.UnitId;
-        TypeId = voucherDTO.TypeId;
-
-        Amount = voucherDTO.Amount;
-        Description = voucherDTO.Description;
-        Code = voucherDTO.Code;
-
-        Likes = voucherDTO.Likes;
-        Dislikes = voucherDTO.Dislikes;
-
-        ValidFrom = voucherDTO.ValidFrom;
-        ValidTo = voucherDTO.ValidTo;
-    }
 }
 
 /*

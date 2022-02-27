@@ -15,15 +15,4 @@ public partial class VoucherTypeDb
     public string Type { get; set; } = null!;
 
     public virtual ICollection<VoucherDb>? Vouchers { get; set; }
-
-    public VoucherTypeDb(VoucherTypeDTO voucherTypeDTO)
-    {
-        Id = voucherTypeDTO.Id;
-        Type = voucherTypeDTO.Type;
-    }
-
-    public VoucherTypeDb(CreateVoucherTypeDTO createVoucherDTO)
-    {
-        Type = createVoucherDTO.Type;
-    }
 }

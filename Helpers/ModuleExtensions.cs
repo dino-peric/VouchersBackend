@@ -5,31 +5,31 @@ public interface IModule
     void MapEndpoints(WebApplication app);
     void DefineServices(IServiceCollection services);
 
+    WebApplicationBuilder RegisterModule(WebApplicationBuilder builder);
+
     // TODO Expose middleware
     // 
 }
 
 public static class ModuleExtensions
 {
-    public static void AddModules(this IServiceCollection services, params Type[] scanMarkers)
+    public static void AddModules(this WebApplicationBuilder builder, params Type[] scanMarkers)
     {
         var modules = new List<IModule>();
 
-        foreach (var scanMarker in scanMarkers)
-        {
-            modules.AddRange(
-                scanMarker.Assembly.ExportedTypes
-                .Where(x => typeof(IModule).IsAssignableFrom(x) && !x.IsInterface)
-                .Select(Activator.CreateInstance).Cast<IModule>()
-                );
-        }
+        modules.AddRange(typeof(IModule).Assembly
+            .GetTypes()
+            .Where(m => m.IsClass && m.IsAssignableTo(typeof(IModule)))
+            .Select(Activator.CreateInstance)
+            .Cast<IModule>());
 
         foreach (var endpointDefinition in modules)
         {
-            endpointDefinition.DefineServices(services);
+            endpointDefinition.RegisterModule(builder);
+            endpointDefinition.DefineServices(builder.Services);
         }
 
-        services.AddSingleton(modules as IReadOnlyCollection<IModule>);
+        builder.Services.AddSingleton(modules as IReadOnlyCollection<IModule>);
     }
 
     public static void MapEndpoints(this WebApplication app)

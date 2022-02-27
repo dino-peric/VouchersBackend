@@ -14,17 +14,20 @@ public class VoucherModule : IModule
         
         app.MapGet("/vouchers/{id:int}", GetVoucherById)
            .WithName("GetVoucherById")
-           .ProducesProblem(404)
            .Produces<VoucherDTO>();
 
         app.MapPost("/vouchers", CreateVoucher)
            .ProducesProblem(500)
            .Produces<VoucherDTO>();
 
-        app.MapPut("/vouchers", UpdateVoucher);
+        app.MapPut("/vouchers", UpdateVoucher)
+           .WithName("UpdateVoucher")
+           .Produces(204);
 
 
-        app.MapDelete("/vouchers/{id:int}", DeleteVoucher);
+        app.MapDelete("/vouchers/{id:int}", DeleteVoucher)
+           .WithName("DeleteVoucher");
+
         app.MapPost("/vouchers/like/{id:int}", UpvoteVoucher);
         app.MapPost("/vouchers/dislike/{id:int}", DownvoteVoucher);
         app.MapGet("/vouchers/query", QueryVouchers);
@@ -35,6 +38,12 @@ public class VoucherModule : IModule
         app.MapPut("/vouchertypes", UpdateVoucherType);
         app.MapDelete("/vouchertypes/{id:int}", DeleteVoucherType);
 
+    }
+
+    public WebApplicationBuilder RegisterModule(WebApplicationBuilder builder)
+    {
+        VoucherRepository.ConfigureRepository(builder);
+        return builder;
     }
 
     #region Vouchers

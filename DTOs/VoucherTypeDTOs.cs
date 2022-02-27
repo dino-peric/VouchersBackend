@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using VouchersBackend.Database;
-
+using AutoMapper;
 namespace VouchersBackend.Models;
 
 public class VoucherTypeDTO
@@ -9,12 +9,6 @@ public class VoucherTypeDTO
     public string Type { get; set; } = null!;
 
     public VoucherTypeDTO() { }
-
-    public VoucherTypeDTO(VoucherTypeDb voucherDb)
-    {
-        Id = voucherDb.Id;
-        Type = voucherDb.Type;
-    }
 }
 
 public class CreateVoucherTypeDTO
@@ -22,9 +16,14 @@ public class CreateVoucherTypeDTO
     public string Type { get; set; } = null!;
 
     public CreateVoucherTypeDTO() { }
+}
 
-    public CreateVoucherTypeDTO(VoucherTypeDb voucherDb)
+
+public class VoucherTypeProfile : Profile
+{
+    public VoucherTypeProfile()
     {
-        Type = voucherDb.Type;
+        CreateMap<VoucherTypeDTO, VoucherTypeDb>().ReverseMap();
+        CreateMap<CreateVoucherTypeDTO, VoucherTypeDb>().ReverseMap();
     }
 }

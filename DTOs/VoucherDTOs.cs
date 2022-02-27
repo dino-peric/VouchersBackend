@@ -1,5 +1,6 @@
 ﻿using VouchersBackend.Database;
 using System.Text.Json.Serialization;
+using AutoMapper;
 
 namespace VouchersBackend.Models;
 
@@ -25,22 +26,6 @@ public class VoucherDTO
     public VoucherTypeDTO? Type { get; set; } = null!;
 
     public VoucherDTO() { }
-
-    public VoucherDTO(VoucherDb voucherDb)
-    {
-        Id = voucherDb.Id;
-        Amount = voucherDb.Amount;
-        Description = voucherDb.Description;
-        Code = voucherDb.Code;
-        ValidFrom = voucherDb.ValidFrom;
-        ValidTo = voucherDb.ValidTo;
-        Likes = voucherDb.Likes;
-        Dislikes = voucherDb.Dislikes;
-
-        Webshop = voucherDb.Webshop != null ? new WebshopDTO(voucherDb.Webshop) : null;
-        Type = voucherDb.Type != null ? new VoucherTypeDTO(voucherDb.Type) :  null;
-        Unit = voucherDb.Unit != null ? new UnitDTO(voucherDb.Unit) : null;
-    }
 }
 
 public class CreateVoucherDTO
@@ -76,6 +61,17 @@ public class UpdateVoucherDTO
 
     public UpdateVoucherDTO() { } 
 }
+
+public class VoucherProfile : Profile
+{
+    public VoucherProfile()
+    {
+        CreateMap<VoucherDTO, VoucherDb>().ReverseMap();
+        CreateMap<CreateVoucherDTO, VoucherDb>().ReverseMap();
+        CreateMap<UpdateVoucherDTO, VoucherDb>().ReverseMap();
+    }
+}
+
 
 /*
 public class VoucherDTO

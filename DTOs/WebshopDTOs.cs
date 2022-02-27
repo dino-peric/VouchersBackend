@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using VouchersBackend.Database;
-
+using AutoMapper;
 namespace VouchersBackend.Models;
 
 public class WebshopDTO
@@ -10,20 +10,6 @@ public class WebshopDTO
     public string Url { get; set; } = null!;
 
     public WebshopDTO() { }
-
-    public WebshopDTO(int id, string name, string url)
-    {
-        Id = id;
-        Name = name;
-        Url = url;
-    }
-
-    public WebshopDTO(WebshopDb webshopDb)
-    {
-        Id = webshopDb.Id;
-        Name = webshopDb.Name;
-        Url = webshopDb.Url;
-    }
 }
 
 public class CreateWebshopDTO
@@ -32,16 +18,13 @@ public class CreateWebshopDTO
     public string Url { get; set; } = null!;
 
     public CreateWebshopDTO() { }
+}
 
-    public CreateWebshopDTO(string name, string url)
+public class WebshopProfile : Profile
+{
+    public WebshopProfile()
     {
-        Name = name;
-        Url = url;
-    }
-
-    public CreateWebshopDTO(WebshopDb webshopDb)
-    {
-        Name = webshopDb.Name;
-        Url = webshopDb.Url;
+        CreateMap<WebshopDTO, WebshopDb>().ReverseMap();
+        CreateMap<CreateWebshopDTO, WebshopDb>().ReverseMap();
     }
 }

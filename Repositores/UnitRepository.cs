@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VouchersBackend.Database;
 using VouchersBackend.Models;
+using AutoMapper;
 
 namespace VouchersBackend.Repositores;
 
@@ -15,11 +16,19 @@ interface IUnitRepository
 
 public class UnitRepository : IUnitRepository
 {
+    private static IMapper _mapper = null!;
+
+    public static void ConfigureRepository(WebApplicationBuilder builder)
+    {
+        var provider = builder.Services.BuildServiceProvider();
+        _mapper = provider.GetRequiredService<IMapper>(); 
+    }
+
     public async Task<List<UnitDTO>> GetAllUnits()
     {
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            return await db.Units.Select(w => new UnitDTO(w)).ToListAsync();
+            return await db.Units.Select(u => _mapper.Map<UnitDTO>(u)).ToListAsync();
         }
     }
 
@@ -32,21 +41,20 @@ public class UnitRepository : IUnitRepository
             if (unit == default(UnitDb))
                 return null;
 
-            return new UnitDTO(unit);
+            return _mapper.Map<UnitDTO>(unit);
         }
     }
 
     public async Task<UnitDTO> CreateUnit(CreateUnitDTO newUnit)
     {
-        // TODO Validation
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            var unitDb = new UnitDb(newUnit);
+            var unitDb = _mapper.Map<UnitDb>(newUnit); //new UnitDb(newUnit);
 
             db.Units.Add(unitDb);
             await db.SaveChangesAsync();
 
-            return new UnitDTO(unitDb);
+            return _mapper.Map<UnitDTO>(unitDb);
         }
     }
 
@@ -62,7 +70,7 @@ public class UnitRepository : IUnitRepository
             db.Entry(unitDb).CurrentValues.SetValues(updatedUnit);
             await db.SaveChangesAsync();
 
-            return new UnitDTO(unitDb);
+            return _mapper.Map<UnitDTO>(unitDb);
         }
     }
 
@@ -70,11 +78,11 @@ public class UnitRepository : IUnitRepository
     {
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            if (await db.Units.FindAsync(id) is UnitDb voucherDb)
+            if (await db.Units.FindAsync(id) is UnitDb unitDb)
             {
-                db.Units.Remove(voucherDb);
+                db.Units.Remove(unitDb);
                 await db.SaveChangesAsync();
-                return new UnitDTO(voucherDb);
+                return _mapper.Map<UnitDTO>(unitDb);
             }
 
             return null; // Results.NotFound();
