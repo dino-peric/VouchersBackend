@@ -18,5 +18,5 @@ var port = Environment.GetEnvironmentVariable("PORT");
 
 Console.WriteLine($"PORT: {port}");
 
-
-app.Run($"http://localhost:{Environment.GetEnvironmentVariable("PORT") ?? throw new ArgumentNullException("Port not set! Set the \"PORT\" env variable")}");
+// Environment.GetEnvironmentVariable("PORT") ?? throw new ArgumentNullException("Port not set! Set the \"PORT\" env variable")
+app.Run($"0.0.0.0:{port}");
