@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using VouchersBackend.Models;
 
-namespace VouchersBackend;
+namespace VouchersBackend.Database;
 
 public partial class VoucherTypeDb
 {
@@ -18,20 +18,12 @@ public partial class VoucherTypeDb
 
     public VoucherTypeDb(VoucherTypeDTO voucherTypeDTO)
     {
+        Id = voucherTypeDTO.Id;
         Type = voucherTypeDTO.Type;
     }
-}
 
-public partial class VoucherTypeDTO
-{
-    public long Id { get; set; }
-    public string Type { get; set; } = null!;
-
-    public VoucherTypeDTO() { }
-
-    public VoucherTypeDTO(VoucherTypeDb voucherDb)
+    public VoucherTypeDb(CreateVoucherTypeDTO createVoucherDTO)
     {
-        Id = voucherDb.Id;
-        Type = voucherDb.Type;
+        Type = createVoucherDTO.Type;
     }
 }

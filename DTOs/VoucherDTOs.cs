@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
-using System.Text.Json;
+﻿using VouchersBackend.Database;
 using System.Text.Json.Serialization;
-using VouchersBackend.Helpers;
 
 namespace VouchersBackend.Models;
 
-public class VoucherDb
+public class VoucherDTO
 {
-    [Key]
     public long Id { get; set; }
     public decimal Amount { get; set; }
     public string? Description { get; set; }
@@ -19,36 +13,71 @@ public class VoucherDb
     public string? Code { get; set; }
     public int Likes { get; set; }
     public int Dislikes { get; set; }
+    public int Popularity { get { return (int)(Likes - Dislikes); } }
 
-    public long TypeId { get; set; }
-    public virtual VoucherTypeDb Type { get; set; } = null!;
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public WebshopDTO? Webshop { get; set; } = null;
 
-    public long UnitId { get; set; }
-    public virtual UnitDb Unit { get; set; } = null! ;
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public UnitDTO? Unit { get; set; } = null!;
 
-    public long WebshopId { get; set; }
-    public virtual WebshopDb Webshop { get; set; } = null! ;
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public VoucherTypeDTO? Type { get; set; } = null!;
 
-    public VoucherDb() { }
+    public VoucherDTO() { }
 
-    public VoucherDb(VoucherDTO voucherDTO)
+    public VoucherDTO(VoucherDb voucherDb)
     {
-        WebshopId = voucherDTO.WebshopId;
-        UnitId = voucherDTO.UnitId;
-        TypeId = voucherDTO.TypeId;
+        Id = voucherDb.Id;
+        Amount = voucherDb.Amount;
+        Description = voucherDb.Description;
+        Code = voucherDb.Code;
+        ValidFrom = voucherDb.ValidFrom;
+        ValidTo = voucherDb.ValidTo;
+        Likes = voucherDb.Likes;
+        Dislikes = voucherDb.Dislikes;
 
-        Amount = voucherDTO.Amount;
-        Description = voucherDTO.Description;
-        Code = voucherDTO.Code;
-
-        Likes = voucherDTO.Likes;
-        Dislikes = voucherDTO.Dislikes;
-
-        ValidFrom = voucherDTO.ValidFrom;
-        ValidTo = voucherDTO.ValidTo;
+        Webshop = voucherDb.Webshop != null ? new WebshopDTO(voucherDb.Webshop) : null;
+        Type = voucherDb.Type != null ? new VoucherTypeDTO(voucherDb.Type) :  null;
+        Unit = voucherDb.Unit != null ? new UnitDTO(voucherDb.Unit) : null;
     }
 }
 
+public class CreateVoucherDTO
+{
+    public decimal Amount { get; set; }
+    public string? Description { get; set; }
+    public DateTime ValidFrom { get; set; }
+    public DateTime? ValidTo { get; set; }
+    public string? Code { get; set; }
+    public int Likes { get; set; }
+    public int Dislikes { get; set; }
+
+    public long WebshopId { get; set; }
+    public long UnitId { get; set; }
+    public long TypeId { get; set; }
+
+    public CreateVoucherDTO() { }
+}
+
+public class UpdateVoucherDTO
+{
+    public long Id { get; set; }
+    public long WebshopId { get; set; }
+    public decimal Amount { get; set; }
+    public long UnitId { get; set; }
+    public string? Description { get; set; }
+    public DateTime ValidFrom { get; set; }
+    public DateTime? ValidTo { get; set; }
+    public string? Code { get; set; }
+    public int Likes { get; set; }
+    public int Dislikes { get; set; }
+    public long TypeId { get; set; }
+
+    public UpdateVoucherDTO() { } 
+}
+
+/*
 public class VoucherDTO
 {
     public long Id { get; set; }
@@ -129,3 +158,4 @@ public class VoucherDTO
     //    );
     //}
 }
+*/

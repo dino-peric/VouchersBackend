@@ -9,7 +9,7 @@ interface IWebshopRepository
 {
     Task<List<WebshopDTO>> GetAllWebshops();
     Task<WebshopDTO?> GetWebshopById(int id);
-    Task<WebshopDTO> CreateWebshop(WebshopDTO newWebshop);
+    Task<WebshopDTO> CreateWebshop(CreateWebshopDTO newWebshop);
     Task<WebshopDTO?> UpdateWebshop(WebshopDTO updatedWebshop);
     Task<WebshopDTO?> DeleteWebshop(long id);
 }
@@ -37,7 +37,7 @@ public class WebshopRepository : IWebshopRepository
         }
     }
 
-    public async Task<WebshopDTO> CreateWebshop(WebshopDTO newWebshop)
+    public async Task<WebshopDTO> CreateWebshop(CreateWebshopDTO newWebshop)
     {
         // TODO Validation
         // This is temporary hack just so it works, need to add proper validation later, need to see where

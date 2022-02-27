@@ -16,7 +16,9 @@
       "launchUrl": "weatherforecast",
       "applicationUrl": "http://localhost:5008",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "CONNECTION_STRING": "Host=ec2-52-215-225-178.eu-west-1.compute.amazonaws.com:5432;Username=nzvagwkgeidqhr;Password=fc9cd80f7be29fe0117fc78a2ac217c9b7a07b30037fe29ac3df3350b7e7fd81;Database=dl8mn9s17l51k",
+        "PORT": "3000"
       }
     },
     "IIS Express": {

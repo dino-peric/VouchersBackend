@@ -9,8 +9,8 @@ interface IVoucherRepository
 {
     Task<List<VoucherDTO>> GetAllVouchers();
     Task<VoucherDTO?> GetVoucherById(long id);
-    Task<VoucherDTO> CreateVoucher(VoucherDTO newVoucher);
-    Task<VoucherDTO?> UpdateVoucher(VoucherDTO voucher);
+    Task<VoucherDTO> CreateVoucher(CreateVoucherDTO newVoucher);
+    Task<VoucherDTO?> UpdateVoucher(UpdateVoucherDTO voucher);
     Task<VoucherDTO?> DeleteVoucher(long id);
 
     Task<VoucherDTO?> UpvoteVoucher(long id);
@@ -20,7 +20,7 @@ interface IVoucherRepository
 
     Task<List<VoucherTypeDTO>> GetAllVoucherTypes();
     Task<VoucherTypeDTO?> GetVoucherTypeById(int id);
-    Task<VoucherTypeDTO> CreateVoucherType(VoucherTypeDTO newVoucher);
+    Task<VoucherTypeDTO> CreateVoucherType(CreateVoucherTypeDTO newVoucher);
     Task<VoucherTypeDTO?> UpdateVoucherType(VoucherTypeDTO voucher);
     Task<VoucherTypeDTO?> DeleteVoucherType(long id);
 }
@@ -50,7 +50,7 @@ public class VoucherRepository : IVoucherRepository
                 .Include(v => v.Type)
                 .Skip((int)((pageNumber - 1) * pageSize))
                 .Take((int)pageSize)
-                .Select(v => new VoucherDTO(v, true, true, true)).ToListAsync();
+                .Select(v => new VoucherDTO(v)).ToListAsync();
         }
     }
 
@@ -62,7 +62,7 @@ public class VoucherRepository : IVoucherRepository
                     .Include(v => v.Webshop)
                     .Include(v => v.Type)
                     .Include(v => v.Unit)
-                    .Select(v => new VoucherDTO(v, true, true, true))
+                    .Select(v => new VoucherDTO(v))
                     .ToListAsync();
         }
     }
@@ -81,7 +81,7 @@ public class VoucherRepository : IVoucherRepository
             if (voucher == default(VoucherDb))
                 return null;
 
-            return new VoucherDTO(voucher, true, true, true);
+            return new VoucherDTO(voucher);
         }
         // if (await db.Vouchers.FindAsync(id) is VoucherDb voucherDb)
         // {
@@ -91,7 +91,7 @@ public class VoucherRepository : IVoucherRepository
         // return null; // Not Found
     }
 
-    public async Task<VoucherDTO> CreateVoucher(VoucherDTO newVoucher)
+    public async Task<VoucherDTO> CreateVoucher(CreateVoucherDTO newVoucher)
     {
         // TODO Validation
         // This is temporary hack just so it works, need to add proper validation later, need to see where
@@ -104,11 +104,16 @@ public class VoucherRepository : IVoucherRepository
 
             db.Add(voucherDb);
             await db.SaveChangesAsync();
+
+            db.Entry(voucherDb).Reference(v => v.Webshop).Load();
+            db.Entry(voucherDb).Reference(v => v.Unit).Load();
+            db.Entry(voucherDb).Reference(v => v.Type).Load();
+
             return new VoucherDTO(voucherDb);
         }
     }
 
-    public async Task<VoucherDTO?> UpdateVoucher(VoucherDTO updatedVoucher)
+    public async Task<VoucherDTO?> UpdateVoucher(UpdateVoucherDTO updatedVoucher)
     {
         using (VoucherdbContext db = new VoucherdbContext())
         {
@@ -116,6 +121,11 @@ public class VoucherRepository : IVoucherRepository
             {
                 db.Entry(voucherDb).CurrentValues.SetValues(updatedVoucher);
                 await db.SaveChangesAsync();
+
+                db.Entry(voucherDb).Reference(v => v.Webshop).Load();
+                db.Entry(voucherDb).Reference(v => v.Unit).Load();
+                db.Entry(voucherDb).Reference(v => v.Type).Load();
+
                 return new VoucherDTO(voucherDb);
             }
 
@@ -190,7 +200,7 @@ public class VoucherRepository : IVoucherRepository
         }
     }
 
-    public async Task<VoucherTypeDTO> CreateVoucherType(VoucherTypeDTO newVoucherType)
+    public async Task<VoucherTypeDTO> CreateVoucherType(CreateVoucherTypeDTO newVoucherType)
     {
         // TODO Validation
         // This is temporary hack just so it works, need to add proper validation later, need to see where

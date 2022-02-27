@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using VouchersBackend.Models;
 
-namespace VouchersBackend;
+namespace VouchersBackend.Database;
 
-public partial class UnitDb
+public class UnitDb
 {
     public UnitDb()
     {
@@ -18,20 +18,12 @@ public partial class UnitDb
 
     public UnitDb(UnitDTO unitDTO)
     {
+        Id = unitDTO.Id;
         Name = unitDTO.Name;
     }
-}
 
-public partial class UnitDTO
-{
-    public long Id { get; set; }
-    public string Name { get; set; } = null!;
-
-    public UnitDTO() { }
-
-    public UnitDTO(UnitDb voucherDb)
+    public UnitDb(CreateUnitDTO unitDTO)
     {
-        Id = voucherDb.Id;
-        Name = voucherDb.Name;
+        Name = unitDTO.Name;
     }
 }

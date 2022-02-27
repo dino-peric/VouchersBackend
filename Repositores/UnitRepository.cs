@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VouchersBackend.Database;
+using VouchersBackend.Models;
 
 namespace VouchersBackend.Repositores;
 
@@ -7,7 +8,7 @@ interface IUnitRepository
 {
     Task<List<UnitDTO>> GetAllUnits();
     Task<UnitDTO?> GetUnitById(int id);
-    Task<UnitDTO> CreateUnit(UnitDTO newUnit);
+    Task<UnitDTO> CreateUnit(CreateUnitDTO newUnit);
     Task<UnitDTO?> UpdateUnit(UnitDTO updatedUnit);
     Task<UnitDTO?> DeleteUnit(long id);
 }
@@ -26,26 +27,26 @@ public class UnitRepository : IUnitRepository
     {
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            var webshop = await db.Units.Where(v => v.Id == id).FirstOrDefaultAsync();
+            var unit = await db.Units.Where(v => v.Id == id).FirstOrDefaultAsync();
 
-            if (webshop == default(UnitDb))
+            if (unit == default(UnitDb))
                 return null;
 
-            return new UnitDTO(webshop);
+            return new UnitDTO(unit);
         }
     }
 
-    public async Task<UnitDTO> CreateUnit(UnitDTO newUnit)
+    public async Task<UnitDTO> CreateUnit(CreateUnitDTO newUnit)
     {
         // TODO Validation
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            var webshopDb = new UnitDb(newUnit);
+            var unitDb = new UnitDb(newUnit);
 
-            db.Units.Add(webshopDb);
+            db.Units.Add(unitDb);
             await db.SaveChangesAsync();
 
-            return new UnitDTO(webshopDb);
+            return new UnitDTO(unitDb);
         }
     }
 
@@ -53,15 +54,15 @@ public class UnitRepository : IUnitRepository
     {
         using (VoucherdbContext db = new VoucherdbContext())
         {
-            var webshop = await db.Units.FindAsync(updatedUnit.Id);
+            var unitDb = await db.Units.FindAsync(updatedUnit.Id);
 
-            if (webshop == default(UnitDb))
+            if (unitDb == default(UnitDb))
                 return null;
 
-            db.Entry(webshop).CurrentValues.SetValues(updatedUnit);
+            db.Entry(unitDb).CurrentValues.SetValues(updatedUnit);
             await db.SaveChangesAsync();
 
-            return new UnitDTO(webshop);
+            return new UnitDTO(unitDb);
         }
     }
 
