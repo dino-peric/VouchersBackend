@@ -14,6 +14,7 @@ public static class WebApplicationExtensions
         }
 
         app.MapEndpoints();
+        app.UseCors();
 
         return app;
     }
