@@ -9,11 +9,11 @@ public class VoucherModule : IModule
 {
     public void MapEndpoints(WebApplication app)
     {
-        app.MapGet("/vouchers", GetAllVouchers)
-           .WithName("GetAllVouchers") 
-           .WithDisplayName("Get all vouchers")
-           .WithTags("Vouchers")
-           .Produces<List<VoucherDTO>>();
+        // app.MapGet("/vouchers", GetAllVouchers)
+        //    .WithName("GetAllVouchers") 
+        //    .WithDisplayName("Get all vouchers")
+        //    .WithTags("Vouchers")
+        //    .Produces<List<VoucherDTO>>();
         
         app.MapGet("/vouchers/{id:int}", GetVoucherById)
            .WithName("GetVoucherById")
@@ -81,11 +81,13 @@ public class VoucherModule : IModule
         return Results.Ok(vouchers);
     }
 
-    internal async Task<IResult> GetAllVouchers(IVoucherRepository repo)
-    {
-        var vouchers = await repo.GetAllVouchers();
-        return Results.Ok(vouchers);
-    }
+    // internal async Task<IResult> GetAllVouchers(IVoucherRepository repo)
+    // {
+    //     Console.WriteLine($"Get all vouchers!");
+
+    //     var vouchers = await repo.GetAllVouchers();
+    //     return Results.Ok(vouchers);
+    // }
 
     internal async Task<IResult> GetVoucherById(IVoucherRepository repo, int id)
     {
