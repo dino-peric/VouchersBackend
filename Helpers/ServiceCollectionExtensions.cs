@@ -34,14 +34,21 @@ public static class ServiceCollectionExtensions
                 });
         });
 
-        builder.Services.AddEndpointsApiExplorer(); // Swagger docs
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddEndpointsApiExplorer(); // Swagger docs, api metadata
+        builder.Services.AddSwaggerGen(c =>
+        { 
+            c.SwaggerDoc("v1", new() { Title = builder.Environment.ApplicationName, Version = "v1" });
+            c.ResolveConflictingActions(ad => ad.Last());
+            // c.TagActionsBy(ta  => 
+            // {
+            //     return new List<string> { ta.ActionDescriptor.DisplayName! };
+            // });
+        });
 
         builder.Services.AddAutoMapper(typeof(Program));
 
         // builder.Services.AddModules(typeof(VoucherDb));
         builder.AddModules(typeof(VoucherDb));
-
 
         return services;
     }
