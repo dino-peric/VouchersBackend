@@ -44,8 +44,10 @@ public class VoucherModule : IModule
 
         app.MapPost("/vouchers/dislike/{id:int}", DownvoteVoucher)
             .WithTags("Vouchers");
-        app.MapGet("/vouchers/query", QueryVouchers)
+
+        app.MapGet("/vouchers", QueryVouchers)
             .WithTags("Vouchers")
+            .WithDisplayName("Query vouchers")
             .Produces<List<VoucherDTO>>();
 
         app.MapGet("/vouchertypes", GetAllVoucherTypes)
