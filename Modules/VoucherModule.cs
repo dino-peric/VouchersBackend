@@ -1,4 +1,5 @@
-﻿using VouchersBackend.Helpers;
+﻿using Microsoft.AspNetCore.Mvc;
+using VouchersBackend.Helpers;
 using VouchersBackend.Models;
 using VouchersBackend.Repositores;
 
@@ -9,34 +10,54 @@ public class VoucherModule : IModule
     public void MapEndpoints(WebApplication app)
     {
         app.MapGet("/vouchers", GetAllVouchers)
-           .WithName("GetAllVouchers")
+           .WithName("GetAllVouchers") 
+           .WithDisplayName("Get all vouchers")
+           .WithTags("Vouchers")
            .Produces<List<VoucherDTO>>();
         
         app.MapGet("/vouchers/{id:int}", GetVoucherById)
            .WithName("GetVoucherById")
-           .Produces<VoucherDTO>();
+           .WithTags("Vouchers")
+           .Produces<VoucherDTO>()
+           .Produces(404);
 
         app.MapPost("/vouchers", CreateVoucher)
-           .ProducesProblem(500)
+           .ProducesProblem(500).WithTags("Vouchers")
            .Produces<VoucherDTO>();
 
         app.MapPut("/vouchers", UpdateVoucher)
            .WithName("UpdateVoucher")
-           .Produces(204);
-
+           .WithTags("Vouchers")
+           .Produces(204)
+           .Produces(404);
 
         app.MapDelete("/vouchers/{id:int}", DeleteVoucher)
-           .WithName("DeleteVoucher");
+           .WithName("DeleteVoucher")
+           .WithTags("Vouchers")
+           .Produces(404);
 
-        app.MapPost("/vouchers/like/{id:int}", UpvoteVoucher);
-        app.MapPost("/vouchers/dislike/{id:int}", DownvoteVoucher);
-        app.MapGet("/vouchers/query", QueryVouchers);
+        app.MapPost("/vouchers/like/{id:int}", UpvoteVoucher)
+            .WithName("UpvoteVoucher")
+            .WithTags("Vouchers")
+            .Produces(404)
+            .Produces(200);
 
-        app.MapGet("/vouchertypes", GetAllVoucherTypes);
-        app.MapGet("/vouchertypes/{id:int}", GetVoucherTypeById);
-        app.MapPost("/vouchertypes", CreateVoucherType);
-        app.MapPut("/vouchertypes", UpdateVoucherType);
-        app.MapDelete("/vouchertypes/{id:int}", DeleteVoucherType);
+        app.MapPost("/vouchers/dislike/{id:int}", DownvoteVoucher)
+            .WithTags("Vouchers");
+        app.MapGet("/vouchers/query", QueryVouchers)
+            .WithTags("Vouchers")
+            .Produces<List<VoucherDTO>>();
+
+        app.MapGet("/vouchertypes", GetAllVoucherTypes)
+            .WithTags("VoucherTypes");
+        app.MapGet("/vouchertypes/{id:int}", GetVoucherTypeById)
+            .WithTags("VoucherTypes");
+        app.MapPost("/vouchertypes", CreateVoucherType)
+            .WithTags("VoucherTypes");
+        app.MapPut("/vouchertypes", UpdateVoucherType)
+            .WithTags("VoucherTypes");
+        app.MapDelete("/vouchertypes/{id:int}", DeleteVoucherType)
+            .WithTags("VoucherTypes");
 
     }
 
@@ -48,13 +69,13 @@ public class VoucherModule : IModule
 
     #region Vouchers
     internal async Task<IResult> QueryVouchers(IVoucherRepository repo,
-                                               SortingParameter sortBy = SortingParameter.Popularity,
-                                               SortingDirection dir = SortingDirection.Descending,
-                                               string filter = "",
-                                               uint pageNumber = 1,
-                                               uint pageSize = 25)
+                                               [FromQuery]string webshopName = "",
+                                               [FromQuery]SortingParameter sortBy = SortingParameter.Popularity,
+                                               [FromQuery]SortingDirection dir = SortingDirection.Descending,
+                                               [FromQuery]uint pageNumber = 1,
+                                               [FromQuery]uint pageSize = 25)
     {
-        var vouchers = await repo.QueryVouchers(sortBy, dir, filter, pageNumber, pageSize);
+        var vouchers = await repo.QueryVouchers(sortBy, dir, webshopName, pageNumber, pageSize);
         return Results.Ok(vouchers);
     }
 
