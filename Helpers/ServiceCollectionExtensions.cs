@@ -30,7 +30,8 @@ public static class ServiceCollectionExtensions
             options.AddDefaultPolicy(
                 builder =>
                 {
-                    builder.WithOrigins("*");
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyMethod();
                 });
         });
 
