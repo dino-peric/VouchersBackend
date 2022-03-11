@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
                 {
                     builder.AllowAnyOrigin();
                     builder.AllowAnyMethod();
+                    builder.AllowAnyHeader();
                 });
         });
 
