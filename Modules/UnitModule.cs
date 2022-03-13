@@ -43,7 +43,10 @@ public class UnitModule : IModule
     internal async Task<IResult> CreateUnit(IUnitRepository repo, CreateUnitDTO unit)
     {
         if (unit == null)
-            return Results.Problem("Provided voucher was null");
+            return Results.Problem("Provided unit was null");
+
+        if (await repo.UnitExists(unit))
+            return Results.Conflict($"Unit with name {unit.Name} already exists!");
 
         var newUnit = await repo.CreateUnit(unit);
 

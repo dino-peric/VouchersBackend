@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VouchersBackend.Database;
@@ -11,9 +12,10 @@ using VouchersBackend.Database;
 namespace VouchersBackend.Migrations
 {
     [DbContext(typeof(VoucherdbContext))]
-    partial class VoucherdbContextModelSnapshot : ModelSnapshot
+    [Migration("20220313103910_AddsUniqueUnitName")]
+    partial class AddsUniqueUnitName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

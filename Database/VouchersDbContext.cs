@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace VouchersBackend.Database
 {
@@ -39,6 +39,10 @@ namespace VouchersBackend.Database
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Name).HasColumnName("name");
+
+                entity.HasIndex(e => e.Name).IsUnique();
+
+                // entity.Property(c => c.Name).UseCollation("SQL_Latin1_General_CP1_CI_AS"); // Case insensitivity
             });
 
             modelBuilder.Entity<VoucherDb>(entity =>
